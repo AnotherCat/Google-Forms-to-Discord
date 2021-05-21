@@ -1,4 +1,6 @@
-var POST_URL = "WEBHOOK URL";
+const POST_URL = "WEBHOOK URL";
+const FORM_NAME = "FORM NAME";
+
 
 function onSubmit(e) {
     var response = e.response.getItemResponses();
@@ -32,7 +34,7 @@ function onSubmit(e) {
         "payload": JSON.stringify({
             "content": "‌",
             "embeds": [{
-                "title": "Event suggestion form received",
+                "title": `${FORM_NAME} form received`,
               "color": 33023, // This is optional, you can look for decimal colour codes at https://www.webtoolkitonline.com/hexadecimal-decimal-color-converter.html
                 "fields": items,
             }]
