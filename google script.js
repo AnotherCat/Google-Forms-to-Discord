@@ -1,40 +1,28 @@
-var POST_URL = "WEBBHOOK URL";
+var POST_URL = "WEBHOOK URL";
 
 function onSubmit(e) {
-    var form = FormApp.getActiveForm();
-    var allResponses = form.getResponses();
-    var latestResponse = allResponses[allResponses.length - 1];
-    var response = latestResponse.getItemResponses();
+    var response = e.response.getItemResponses();
     var items = [];
 
     for (var i = 0; i < response.length; i++) {
         var question = response[i].getItem().getTitle();
         var answer = response[i].getResponse();
-        try {
-            var parts = answer.match(/[\s\S]{1,1024}/g) || [];
-        } catch (e) {
-            var parts = answer;
-        }
 
         if (answer == "") {
             continue;
         }
-        for (var j = 0; j < parts.length; j++) {
-            if (j == 0) {
-                items.push({
-                    "name": question,
-                    "value": parts[j],
-                    "inline": false
-                });
-            } else {
-                items.push({
-                    "name": question.concat(" (cont.)"),
-                    "value": parts[j],
-                    "inline": false
-                });
-            }
+        /* NOTE: this script cannot handle checkboxes. (anything that'll return more than one 'answer')*/
+        if (answer.length > 150){
+          substring = answer.substring(0, 150);
+          answer = substring.concat("--- continued.");
         }
-    }
+
+        items.push({
+          "name": question,
+          "value": answer,
+          "inline": false
+        });
+    }  
 
     var options = {
         "method": "post",
@@ -44,12 +32,9 @@ function onSubmit(e) {
         "payload": JSON.stringify({
             "content": "‌",
             "embeds": [{
-                "title": "Some nice title here",
+                "title": "Event suggestion form received",
               "color": 33023, // This is optional, you can look for decimal colour codes at https://www.webtoolkitonline.com/hexadecimal-decimal-color-converter.html
                 "fields": items,
-                "footer": {
-                    "text": "Some footer here"
-                }
             }]
         })
     };
